@@ -1,14 +1,18 @@
 const express = require('express');
 const admin = require('firebase-admin');
 const dotenv = require('dotenv');
+const bodyParser = require('body-parser');
+const cors = require('cors'); // Import cors
+const authRoutes = require('./auth'); // Ensure auth.js exports a router instance
+const loginRoutes = require('./login'); // Ensure login.js exports a router instance
 
-dotenv.config();
+dotenv.config(); // Ensure this loads the FIREBASE_API_KEY from the .env file
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
-// Check if FIREBASE_CONFIG is being read correctly
-
+app.use(bodyParser.json());
+app.use(cors({ origin: 'http://localhost:3000' })); // Allow requests from the frontend
 
 // Parse Firebase configuration from environment variable
 const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
@@ -18,12 +22,18 @@ admin.initializeApp({
   credential: admin.credential.cert({
     projectId: firebaseConfig.project_id,
     clientEmail: firebaseConfig.client_email,
-    privateKey: firebaseConfig.private_key 
+    privateKey: firebaseConfig.private_key.replace(/\\n/g, '\n'),
   }),
   databaseURL: firebaseConfig.databaseURL,
 });
 
 const db = admin.firestore();
+
+// Use auth routes
+app.use('/auth', authRoutes);
+
+// Use login routes
+app.use('/login', loginRoutes);
 
 // Endpoint to get user data
 app.get('/users', async (req, res) => {
