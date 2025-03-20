@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Route, Routes, Link, useNavigate } from 'react-router-dom'; // Remove Router import
+import { Route, Routes, Link, useNavigate } from 'react-router-dom';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'; // Import from @react-oauth/google
 import './App.css';
 import Register from './pages/register';
 import VerifyEmail from './pages/verifyemail'; // Ensure VerifyEmail is a default export
@@ -36,39 +37,80 @@ function App() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    const idToken = credentialResponse.credential; // Extract ID token
+    if (!idToken) {
+      setLoginMessage('Google login failed: No ID token received.');
+      return;
+    }
+    try {
+      const res = await fetch('http://localhost:3001/google-signin', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${idToken}`, // Send ID token in Authorization header
+        },
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(`HTTP error! status: ${res.status}, message: ${errorData.message}`);
+      }
+      const data = await res.json();
+      setLoginMessage('Google login successful!');
+    } catch (error) {
+      console.error('Error during Google login:', error); // Log the error for debugging
+      if (error.message.includes('Invalid token provided')) {
+        setLoginMessage('Google login failed: Invalid token. Please ensure you are using the correct account.');
+      } else if (error.message.includes('Failed to fetch')) {
+        setLoginMessage('Failed to connect to the server. Please try again later.');
+      } else {
+        setLoginMessage('An error occurred during Google login.');
+      }
+    }
+  };
+
+  const handleGoogleFailure = () => {
+    setLoginMessage('Google login failed. Please try again.');
+  };
+
   return (
-    <div className="main-container">
-      <Routes>
-        <Route exact path="/" element={
-          <>
-            <h1>Loot Market</h1>
-            <p>Buy and sell your favorite in-game items</p>
-            <form onSubmit={handleLoginSubmit}>
-              <p>Login</p>
-              <input
-                type="text"
-                name="email"
-                placeholder="example@gmail.com"
-                value={loginData.email}
-                onChange={handleLoginChange}
+    <GoogleOAuthProvider clientId="176878939053-tb4n8t6390jrhvks67pkhoek9usn4pu7.apps.googleusercontent.com"> {/* Replace with the correct Web Client ID */}
+      <div className="main-container">
+        <Routes>
+          <Route exact path="/" element={
+            <>
+              <h1>Loot Market</h1>
+              <p>Buy and sell your favorite in-game items</p>
+              <form onSubmit={handleLoginSubmit}>
+                <p>Login</p>
+                <input
+                  type="text"
+                  name="email"
+                  placeholder="example@gmail.com"
+                  value={loginData.email}
+                  onChange={handleLoginChange}
+                />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="password"
+                  value={loginData.password}
+                  onChange={handleLoginChange}
+                />
+                <button type="submit">Login</button>
+              </form>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleFailure}
               />
-              <input
-                type="password"
-                name="password"
-                placeholder="password"
-                value={loginData.password}
-                onChange={handleLoginChange}
-              />
-              <button type="submit">Login</button>
-            </form>
-            {loginMessage && <p>{loginMessage}</p>}
-            <Link to="/register">Don't have an account? Register here</Link>
-          </>
-        } />
-        <Route path="/register" element={<Register />} />
-        <Route path="/verifyemail" element={<VerifyEmail />} /> {/* Add VerifyEmail route */}
-      </Routes>
-    </div>
+              {loginMessage && <p>{loginMessage}</p>}
+              <Link to="/register">Don't have an account? Register here</Link>
+            </>
+          } />
+          <Route path="/register" element={<Register />} />
+          <Route path="/verifyemail" element={<VerifyEmail />} /> {/* Add VerifyEmail route */}
+        </Routes>
+      </div>
+    </GoogleOAuthProvider>
   );
 }
 
