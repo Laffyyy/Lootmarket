@@ -10,7 +10,7 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3001/auth/register', { email, password });
+      await axios.post('http://localhost:5000/auth/register', { email, password });
       alert('OTP sent to your email');
       navigate('/verifyemail'); // Redirect to VerifyEmail page
     } catch (error) {

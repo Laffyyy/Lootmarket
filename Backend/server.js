@@ -5,12 +5,12 @@ const bodyParser = require('body-parser');
 const cors = require('cors'); // Import cors
 const authRoutes = require('./auth'); // Ensure auth.js exports a router instance
 const loginRoutes = require('./login'); // Ensure login.js exports a router instance
-const googleSigninRoutes = require('./google-signin'); // Import Google Sign-In routes
+const googleSigninRoutes = require('./google-signin'); // Ensure this is correctly imported
 
 dotenv.config(); // Ensure this loads the FIREBASE_API_KEY from the .env file
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
 app.use(cors({ 
@@ -49,7 +49,7 @@ app.use('/auth', authRoutes);
 app.use('/login', loginRoutes);
 
 // Add Google Sign-In route
-app.use('/google-signin', googleSigninRoutes);
+app.use('/google-signin', googleSigninRoutes); // Ensure this is correctly registered
 
 // Endpoint to get user data
 app.get('/users', async (req, res) => {
