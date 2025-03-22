@@ -50,6 +50,15 @@ router.get('/', async (req, res) => { // Ensure the route matches the frontend r
       throw error; // Re-throw other errors
     });
 
+    // Save the user's email to the 'users' collection in Firestore if it doesn't already exist
+    const userQuery = await admin.firestore().collection('users').where('email', '==', email).get();
+    if (userQuery.empty) {
+      await admin.firestore().collection('users').add({ email });
+      console.log('Email added to users collection:', email);
+    } else {
+      console.log('Email already exists in users collection:', email);
+    }
+
     // Respond with the user information
     res.status(200).json({
       message: 'Google sign-in successful',
