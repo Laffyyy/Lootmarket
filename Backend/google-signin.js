@@ -53,8 +53,9 @@ router.get('/', async (req, res) => { // Ensure the route matches the frontend r
     // Save the user's email to the 'users' collection in Firestore if it doesn't already exist
     const userQuery = await admin.firestore().collection('users').where('email', '==', email).get();
     if (userQuery.empty) {
-      await admin.firestore().collection('users').add({ email });
-      console.log('Email added to users collection:', email);
+      // Save the user's email to the 'users' collection in Firestore with the document ID matching the user ID
+      await admin.firestore().collection('users').doc(userRecord.uid).set({ email });
+      console.log('Email added to users collection with UID as document ID:', email);
     } else {
       console.log('Email already exists in users collection:', email);
     }
