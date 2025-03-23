@@ -1,0 +1,279 @@
+/* General Container */
+.home-container {
+  font-family: Arial, sans-serif;
+  background-color: #e9f7ff;
+  color: #0a3d62;
+}
+
+body {
+  background-color: #e9f7ff;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  background-color: #0a3d62;
+  border-bottom: 3px solid #1e6091;
+  color: white;
+}
+
+/* Logo */
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  width: 40px;
+  height: 40px;
+  background: #1e6091;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.logo-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Navigation Links */
+.nav-links a {
+  margin: 0 20px;
+  text-decoration: none;
+  color: white;
+  font-size: 20px;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #a8dadc;
+}
+
+/* Search Bar & Icons */
+.nav-icons {
+  display: flex;
+  align-items: center;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 999px;
+  padding: 8px 14px;
+  width: 480px;
+  height: 36px;
+}
+
+.search-bar {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 16px;
+  border: none;
+  outline: none;
+  flex-grow: 1;
+}
+
+.search-icon {
+  width: 22px;
+  height: 22px;
+  margin-left: 10px;
+}
+
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-left: 20px;
+  cursor: pointer;
+}
+
+/* Banner */
+.banner {
+  width: 100%;
+  height: 470px;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Stories Section */
+.stories-section {
+  padding: 20px;
+  overflow: hidden;
+}
+
+.stories-section h2 {
+  color: #0a3d62;
+}
+
+.stories-container {
+  display: flex;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 10px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #1e6091 transparent;
+}
+
+.stories-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.stories-container::-webkit-scrollbar-thumb {
+  background-color: #1e6091;
+  border-radius: 4px;
+}
+
+.stories {
+  display: flex;
+  gap: 15px;
+}
+
+.story {
+  flex: 0 0 auto;
+  width: 160px;
+  height: 190px;
+  background: #ffffff;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #1e6091;
+}
+
+.add-story {
+  flex: 0 0 auto;
+  width: 160px;
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  background: white;
+  border: 3px dashed #1e6091;
+  cursor: pointer;
+}
+
+/* Section Divider */
+.section-divider {
+  width: 100%;
+  max-width: 1870px;
+  height: 3px;
+  background: #ffffff;
+  border: none;
+  margin: 20px;
+  display: block;
+}
+
+/* Products Section */
+.products-section {
+  padding: 20px;
+}
+
+.products-section h2 {
+  color: #1e3a8a;
+}
+
+.products {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  padding: 10px;
+  justify-content: flex-start;
+}
+
+/* Product Card */
+.product-card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 212px;
+  min-width: 200px;
+  margin: 0;
+}
+
+/* Product Image */
+.product-image-container {
+  position: relative;
+  height: 150px;
+  background-color: #e5e7eb;
+}
+
+.product-image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+/* Product Details */
+.product-details {
+  padding: 10px;
+}
+
+.product-name {
+  font-size: 14px;
+}
+
+.product-seller {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #6b7280;
+}
+
+/* Price & Like Button Alignment */
+.product-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-price {
+  font-size: 14px;
+  font-weight: bold;
+  color: #1e6091;
+}
+
+.like-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: gray;
+  transition: color 0.3s ease;
+}
+
+.like-button.liked {
+  color: red;
+}
+
+/* Add Product Button */
+.add-product-button {
+  display: block;
+  width: 200px;
+  padding: 12px;
+  background-color: #1e6091;
+  color: white;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  margin: 30px auto;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.add-product-button:hover {
+  background-color: #1e40af;
+}
