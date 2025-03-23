@@ -4,6 +4,8 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google'; // Impor
 import './App.css';
 import Register from './pages/register';
 import VerifyEmail from './pages/verifyemail'; // Ensure VerifyEmail is a default export
+import Dashboard from './pages/dashboard'; // Import Dashboard component
+import PostStories from './pages/PostStories'; // Import PostStories component
 
 function App() {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
@@ -26,6 +28,8 @@ function App() {
       const data = await response.json();
       if (response.ok) {
         setLoginMessage('Login successful!');
+        localStorage.setItem('userId', data.user.uid); // Save user ID to local storage
+        navigate('/dashboard'); // Redirect to dashboard
       } else if (response.status === 403) {
         setLoginMessage('Email not verified. OTP has been resent to your email.');
         navigate('/verifyemail'); // Redirect to VerifyEmail page
@@ -57,6 +61,8 @@ function App() {
       }
       const data = await res.json();
       setLoginMessage(`Google login successful! Welcome, ${data.user.name}`);
+      localStorage.setItem('userId', data.user.uid); // Save user ID to local storage
+      navigate('/dashboard'); // Redirect to dashboard
     } catch (error) {
       console.error('Error during Google login:', error); // Log the error for debugging
       if (error.message.includes('Cannot GET /google-signin')) {
@@ -111,6 +117,8 @@ function App() {
           } />
           <Route path="/register" element={<Register />} />
           <Route path="/verifyemail" element={<VerifyEmail />} /> {/* Add VerifyEmail route */}
+          <Route path="/dashboard" element={<Dashboard />} /> {/* Add Dashboard route */}
+          <Route path="/post-stories" element={<PostStories />} /> {/* Add PostStories route */}
         </Routes>
       </div>
     </GoogleOAuthProvider>
