@@ -58,7 +58,7 @@ function Login() {
       const data = await res.json();
       setLoginMessage(`Google login successful! Welcome, ${data.user.name}`);
       localStorage.setItem('userId', data.user.uid);
-      navigate('/dashboard');
+      navigate('/home');
     } catch (error) {
       console.error('Error during Google login:', error);
       if (error.message.includes('Cannot GET /google-signin')) {
