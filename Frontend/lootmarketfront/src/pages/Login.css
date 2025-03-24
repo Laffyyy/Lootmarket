@@ -1,0 +1,100 @@
+body {
+  background: url('/public/webbg.png') no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-box {
+  display: flex;
+  width: 750px; /* Increased Width */
+  height: 500px; /* Increased Height */
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.login-left {
+  width: 50%;
+  background: white;
+  padding: 30px; /* Increased Padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-right {
+  width: 50%;
+  background: url('/public/loginbg.png') no-repeat center center;
+  background-size: cover;
+}
+
+h2 {
+  margin-bottom: 15px; /* More Spacing */
+  font-size: 24px; /* Bigger Text */
+  color: black;
+}
+
+.google-login {
+  width: 90%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  background: white;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+hr {
+  width: 95%; /* Adjust as needed */
+  max-width: 400px; /* Control max length */
+  border: none;
+  border-top: 2px solid rgb(235, 235, 235); /* Makes it more visible */
+  margin: 20px auto; /* Centers it */
+  flex: none; /* Prevents flexbox from stretching it */
+}
+
+input {
+  width: 85%;
+  padding: 12px; /* Bigger Inputs */
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 16px; /* Larger Font */
+}
+
+.login-button {
+  width: 90%;
+  background: linear-gradient(135deg, #4A90E2, #007BFF);
+  color: white;
+  border: none;
+  padding: 12px;
+  margin-top: 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+p {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+p a {
+  color: #6db9ff;
+  font-weight: bold;
+  text-decoration: none;
+}
