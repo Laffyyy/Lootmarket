@@ -25,7 +25,7 @@ function Login() {
       if (response.ok) {
         setLoginMessage('Login successful!');
         localStorage.setItem('userId', data.user.uid);
-        navigate('/dashboard');
+        navigate('/home');
       } else if (response.status === 403) {
         setLoginMessage('Email not verified. OTP has been resent to your email.');
         navigate(`/verifyemail?email=${encodeURIComponent(loginData.email)}`);
