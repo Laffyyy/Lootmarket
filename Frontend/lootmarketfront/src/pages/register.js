@@ -25,6 +25,7 @@ function Register() {
       alert('Error registering user: ' + (error.response ? error.response.data : error.message));
     }
   };
+  
 
   return (
     <div className="register-container">

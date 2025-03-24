@@ -22,6 +22,7 @@ const Home = () => {
 
   return (
     <div className="home-container">
+      {/* Ensure no <Router> is used here */}
       {/* Navbar */}
       <nav className="navbar">
         <div className="logo-container">
