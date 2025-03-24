@@ -18,7 +18,7 @@ function Register() {
     }
 
     try {
-      await axios.post('http://localhost:3001/auth/register', { email, password });
+      await axios.post('http://localhost:5000/auth/register', { email, password });
       alert('OTP sent to your email');
       navigate('/verifyemail');
     } catch (error) {

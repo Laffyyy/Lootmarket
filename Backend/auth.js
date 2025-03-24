@@ -131,8 +131,8 @@ router.post('/verify-email', async (req, res) => {
       const isValidOtp = otpData.otp === otp && (currentTime - otpTime) <= 10 * 60 * 1000;
 
       if (isValidOtp) {
-        // Save the user's email to the 'users' collection in Firestore with an auto-generated ID
-        await admin.firestore().collection('users').add({ email });
+        // Save the user's email to the 'users' collection in Firestore with the document ID matching the user ID
+        await admin.firestore().collection('users').doc(otpDoc.id).set({ email });
 
         res.status(200).json({ message: 'Email verified successfully' });
       } else {
