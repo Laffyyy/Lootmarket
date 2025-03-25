@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./StoryViewer.css";
 
 const StoryViewer = ({ onClose }) => {
   const [stories, setStories] = useState([]);
