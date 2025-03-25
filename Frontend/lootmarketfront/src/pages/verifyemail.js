@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import './register.css'; // Import the CSS file
+import logo from '../assets/logo.png'; // Import the logo
 
 export default function VerifyEmail() {
   const [email, setEmail] = useState('');
@@ -23,7 +26,7 @@ export default function VerifyEmail() {
     setError('');
 
     try {
-      const response = await fetch('/verify-email', {
+      const response = await fetch('http://localhost:5000/auth/verify-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),
@@ -32,6 +35,7 @@ export default function VerifyEmail() {
       if (response.ok) {
         const data = await response.json();
         setMessage(data.message);
+        navigator('/login');
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Verification failed');
@@ -42,32 +46,38 @@ export default function VerifyEmail() {
   };
 
   return (
-    <div>
-      <h1>Verify Your Email</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            readOnly={!!email} // Make the field read-only if pre-filled
-          />
+    <div className="register-container">
+      <div className="register-box">
+        {/* Left Side - Blue with Logo */}
+        <div className="register-left">
+          <img src={logo} alt="Logo" className="register-logo" />
         </div>
-        <div>
-          <label>OTP:</label>
-          <input
-            type="text"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            required
-          />
+
+        {/* Right Side - Verify Email Form */}
+        <div className="register-right">
+          <h2>Verify Your Email</h2>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              readOnly={!!email} // Make the field read-only if pre-filled
+              placeholder="Enter your email"
+            />
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+              placeholder="Enter your OTP"
+            />
+            <button type="submit" className="register-button">Verify</button>
+          </form>
+          {message && <p style={{ color: 'green' }}>{message}</p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
-        <button type="submit">Verify</button>
-      </form>
-      {message && <p style={{ color: 'green' }}>{message}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      </div>
     </div>
   );
 }

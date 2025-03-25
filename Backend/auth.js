@@ -110,12 +110,18 @@ router.post('/verify-email', async (req, res) => {
     // Log the incoming request for debugging
     console.log('Verifying OTP for email:', email, 'with OTP:', otp);
 
+    // Validate input
+    if (!email || !otp) {
+      console.error('Missing email or OTP in request body');
+      return res.status(400).json({ error: 'Email and OTP are required' });
+    }
+
     // Retrieve the most recent OTP from Firestore
-    const otpQuery = await admin.firestore()  
+    const otpQuery = await admin.firestore()
       .collection('otps')
-      .where('email', '==', email)  
-      .orderBy('createdAt', 'desc') // Sort by createdAt in descending order
-      .limit(1) // Get the most recent document
+      .where('email', '==', email)
+      .orderBy('createdAt', 'desc')
+      .limit(1)
       .get();
 
     if (!otpQuery.empty) {
@@ -131,7 +137,7 @@ router.post('/verify-email', async (req, res) => {
       const isValidOtp = otpData.otp === otp && (currentTime - otpTime) <= 10 * 60 * 1000;
 
       if (isValidOtp) {
-        // Save the user's email to the 'users' collection in Firestore with the document ID matching the user ID
+        // Save the user's email to the 'users' collection in Firestore
         await admin.firestore().collection('users').doc(otpDoc.id).set({ email });
 
         res.status(200).json({ message: 'Email verified successfully' });
@@ -150,8 +156,11 @@ router.post('/verify-email', async (req, res) => {
       res.status(400).json({ error: 'Invalid email or OTP', details: { email } });
     }
   } catch (error) {
+    // Log the error for debugging
     console.error('Error verifying email:', error);
-    res.status(500).send('Error verifying email: ' + error.message);
+
+    // Add detailed error response
+    res.status(500).json({ error: 'Error verifying email', details: error.message });
   }
 });
 
