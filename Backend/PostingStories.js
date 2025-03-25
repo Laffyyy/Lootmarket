@@ -16,8 +16,8 @@ router.post('/', upload.single('picture'), async (req, res) => {
     return res.status(401).json({ message: 'Unauthorized: User ID is required' });
   }
 
-  if (!title || !caption) {
-    return res.status(400).json({ message: 'Title and caption are required' });
+  if (!title) {
+    return res.status(400).json({ message: 'Title is required' });
   }
 
   if (!req.file) {
@@ -49,7 +49,7 @@ router.post('/', upload.single('picture'), async (req, res) => {
     await userStoriesRef.add({
       title,
       caption,
-      pictureId,
+      pictureId: pictureId || "",
       timestamp,
     });
 

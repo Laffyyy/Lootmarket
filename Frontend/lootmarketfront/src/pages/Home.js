@@ -1,16 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
-import bannerImage from "lootmarketfront/public/banner.png"; // Import the image
+import bannerImage from "lootmarketfront/public/banner.png";
+import StoryViewer from "../assets/components/StoryViewer";
+import CreatePost from "../assets/components/CreatePost";
+import axios from "axios";
 
 const Home = () => {
   const [stories, setStories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [isStoryViewerOpen, setIsStoryViewerOpen] = useState(false);
+  const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Add Story Function
-  const addStory = () => {
-    const newStory = { id: stories.length + 1, content: `Story ${stories.length + 1}` };
+  useEffect(() => {
+    const fetchStories = async () => {
+      try {
+        const userId = localStorage.getItem("userId"); // Retrieve user ID from local storage
+        if (!userId) {
+          alert("User not logged in. Please log in first.");
+          return;
+        }
+
+        const response = await axios.get("http://localhost:5000/stories", {
+          headers: { "user-id": userId },
+        });
+        setStories(response.data.stories);
+      } catch (error) {
+        console.error("Error fetching stories:", error);
+      }
+    };
+
+    fetchStories();
+  }, []);
+
+  const addStory = (newStory) => {
     setStories([...stories, newStory]);
   };
 
@@ -53,17 +77,36 @@ const Home = () => {
         <h2>Stories</h2>
         <div className="stories-container">
           <div className="stories">
-            <div className="story add-story" onClick={addStory}>
+            <div
+              className="story add-story"
+              onClick={() => setIsCreatePostOpen(true)}
+            >
               <span>+</span>
             </div>
-            {stories.map((story) => (
-              <div key={story.id} className="story">
-                <div className="story-content">{story.content}</div>
+            {stories.map((story, index) => (
+              <div
+                key={story.id}
+                className="story"
+                onClick={() => setIsStoryViewerOpen(true)}
+              >
+                <div className="story-content">{story.title}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
+      {isStoryViewerOpen && (
+        <StoryViewer
+          stories={stories}
+          onClose={() => setIsStoryViewerOpen(false)}
+        />
+      )}
+      {isCreatePostOpen && (
+        <CreatePost
+          onClose={() => setIsCreatePostOpen(false)}
+          onStoryPosted={addStory}
+        />
+      )}
 
       {/* Section Divider */}
       <hr className="section-divider" />
