@@ -22,10 +22,28 @@ const Home = () => {
           return;
         }
 
+        console.log(`Fetching stories for userId: ${userId}`);
         const response = await axios.get("http://localhost:5000/stories", {
           headers: { "user-id": userId },
         });
-        setStories(response.data.stories);
+
+        console.log("Fetched stories:", response.data.stories);
+
+        const storiesWithImages = await Promise.all(
+          response.data.stories.map(async (story) => {
+            const imageUrl = `http://localhost:5000${story.pictureUrl}`;
+            try {
+              await axios.get(imageUrl); // Check if the image exists
+              return { ...story, pictureUrl: imageUrl };
+            } catch {
+              console.warn(`Image not found for story: ${story.title}`);
+              return null; // Skip stories with missing images
+            }
+          })
+        );
+
+        // Filter out stories with missing images
+        setStories(storiesWithImages.filter((story) => story !== null));
       } catch (error) {
         console.error("Error fetching stories:", error);
       }
@@ -83,15 +101,50 @@ const Home = () => {
             >
               <span>+</span>
             </div>
-            {stories.map((story, index) => (
-              <div
-                key={story.id}
-                className="story"
-                onClick={() => setIsStoryViewerOpen(true)}
-              >
-                <div className="story-content">{story.title}</div>
-              </div>
-            ))}
+            {stories.map((story, index) => {
+              const fullImageUrl = story.pictureUrl.startsWith("http")
+                ? story.pictureUrl // Use as-is if it's already a full URL
+                : `http://localhost:5000${story.pictureUrl}`;
+              console.log(`Displaying story: ${story.title}, Full Image URL: ${fullImageUrl}`);
+              return (
+                <div
+                  key={story.id}
+                  className="story"
+                  onClick={() => setIsStoryViewerOpen(true)}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <img
+                    src={fullImageUrl} // Use the corrected full URL
+                    alt={story.title}
+                    style={{
+                      width: "60px",
+                      height: "60px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      marginBottom: "5px",
+                    }}
+                  />
+                  <div
+                    className="story-content"
+                    style={{
+                      fontSize: "12px",
+                      textAlign: "center",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      width: "60px",
+                    }}
+                  >
+                    {story.title}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

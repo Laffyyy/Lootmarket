@@ -7,6 +7,7 @@ const authRoutes = require('./auth'); // Ensure auth.js exports a router instanc
 const loginRoutes = require('./login'); // Ensure login.js exports a router instance
 const googleSigninRoutes = require('./google-signin'); // Ensure this is correctly imported
 const postingStoriesRoutes = require('./PostingStories'); // Import the new route
+const path = require('path'); // Import path module
 
 dotenv.config(); // Ensure this loads the FIREBASE_API_KEY from the .env file
 
@@ -19,6 +20,15 @@ app.use(cors({
   methods: ['GET', 'POST'], // Allow specific HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization', 'user-id'], // Add 'user-id' to allowed headers
 })); // Allow requests from the frontend
+
+// Serve static files from the bucket directory
+app.use('/bucket', express.static(path.join(__dirname, 'bucket')));
+
+// Log requests to static files for debugging
+app.use('/bucket', (req, res, next) => {
+  console.log(`Static file requested: ${req.path}`);
+  next();
+});
 
 // Parse Firebase configuration from environment variable
 const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG); // Ensure this matches the correct Firebase project

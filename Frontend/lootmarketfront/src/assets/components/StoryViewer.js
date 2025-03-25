@@ -5,9 +5,30 @@ const StoryViewer = ({ onClose }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    fetch("https://api.example.com/stories")
-      .then((response) => response.json())
-      .then((data) => setStories(data))
+    const userId = localStorage.getItem("userId"); // Retrieve user ID from local storage
+    if (!userId) {
+      console.error("User not logged in. Please log in first.");
+      return;
+    }
+
+    fetch(`http://localhost:5000/stories`, {
+      headers: { "user-id": userId },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch stories");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const updatedStories = data.stories.map((story) => ({
+          ...story,
+          pictureUrl: story.pictureUrl.startsWith("http")
+            ? story.pictureUrl
+            : `http://localhost:5000${story.pictureUrl}`, // Ensure full URL
+        }));
+        setStories(updatedStories);
+      })
       .catch((error) => console.error("Error fetching stories:", error));
   }, []);
 
