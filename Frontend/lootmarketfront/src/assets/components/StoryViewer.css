@@ -1,0 +1,113 @@
+/* StoryViewer.css */
+.story-viewer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .story-viewer-container {
+    position: relative;
+    width: 350px;
+    height: 600px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: white;
+  }
+  
+  .story-progress {
+    display: flex;
+    width: 100%;
+    height: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .progress-bar {
+    flex: 1;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    margin: 0 2px;
+  }
+  
+  .progress-bar.filled {
+    background: white;
+  }
+  
+  .story-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    width: 100%;
+  }
+  
+  .story-image {
+    max-width: 100%;
+    max-height: 80%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .story-title {
+    color: white;
+    margin-top: 10px;
+    font-size: 18px;
+    text-align: center;
+  }
+  
+  .story-navigation {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .nav-button {
+    background: rgba(255, 255, 255, 0.6);
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  .nav-button:hover {
+    background: white;
+  }
+  
+  .nav-button.left {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .nav-button.right {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
