@@ -65,19 +65,29 @@ router.post('/reset-password', async (req, res) => {
 
     if (otpDoc.exists) {
       const otpData = otpDoc.data();
+
+      if (!otpData.createdAt) {
+        return res.status(400).json({ error: 'Invalid OTP data. Please request a new OTP.' });
+      }
+
       const currentTime = new Date().getTime();
       const otpTime = otpData.createdAt.toDate().getTime();
 
       // Validate OTP
       if (otpData.otp === otp && (currentTime - otpTime) <= 10 * 60 * 1000) {
-        // Update user's password
-        const user = await admin.auth().getUserByEmail(email);
-        await admin.auth().updateUser(user.uid, { password: newPassword });
+        try {
+          // Update user's password
+          const user = await admin.auth().getUserByEmail(email);
+          await admin.auth().updateUser(user.uid, { password: newPassword });
 
-        // Delete OTP document
-        await otpDoc.ref.delete();
+          // Delete OTP document
+          await otpDoc.ref.delete();
 
-        res.status(200).json({ message: 'Password reset successfully.' });
+          res.status(200).json({ message: 'Password reset successfully.' });
+        } catch (updateError) {
+          console.error('Error updating user password:', updateError);
+          res.status(500).json({ error: 'Failed to update password. Please try again later.' });
+        }
       } else {
         res.status(400).json({ error: 'Invalid or expired OTP.' });
       }
@@ -86,7 +96,7 @@ router.post('/reset-password', async (req, res) => {
     }
   } catch (error) {
     console.error('Error resetting password:', error);
-    res.status(500).json({ error: 'Failed to reset password. Please try again later.' });
+    res.status(500).json({ error: 'An unexpected error occurred. Please try again later.' });
   }
 });
 
