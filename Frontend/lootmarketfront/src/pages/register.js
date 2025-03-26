@@ -20,7 +20,7 @@ function Register() {
     try {
       await axios.post('http://localhost:5000/auth/register', { email, password });
       alert('OTP sent to your email');
-      navigate('/verifyemail');
+      navigate(`/verifyemail?email=${encodeURIComponent(email)}`);
     } catch (error) {
       alert('Error registering user: ' + (error.response ? error.response.data : error.message));
     }

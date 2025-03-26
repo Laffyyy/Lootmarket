@@ -7,6 +7,7 @@ import Register from './pages/register';
 import VerifyEmail from './pages/verifyemail';
 import Home from './pages/Home'; // Import the Home component
 import Profile from './pages/Profile';
+import ForgotPassword from './pages/forgotpassword'; // Import the ForgotPassword component
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/verifyemail" element={<VerifyEmail />} />
           <Route path="/home" element={<Home />} />
           <Route path="/Profile" element={<Profile />} />
+          <Route path='/forgotpassword' element={<ForgotPassword />} />
         </Routes>
       </div>
   );

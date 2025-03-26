@@ -108,7 +108,7 @@ function Login() {
                 onChange={handleLoginChange}
               />
               <p>
-                <Link to="/forgot-password" className="forgot-password-link">
+                <Link to="/forgotpassword" className="forgot-password-link">
                   Forgot Password?
                 </Link>
               </p>

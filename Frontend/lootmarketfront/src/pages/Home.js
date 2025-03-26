@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import StoryViewer from "../assets/components/StoryViewer";
 import CreatePost from "../assets/components/CreatePost";
 import "./Home.css";
 import bannerImage from "lootmarketfront/public/banner.png";
-import logo from "../assets/Images/logo.png"; // Updated path for logo.png
-import axios from "axios";
+import CardProduct from "../component/cardproduct";
+import EditProduct from "../component/editproduct"; // Import the EditProduct component
 
 const Home = () => {
   const [stories, setStories] = useState([]);
@@ -13,6 +13,7 @@ const Home = () => {
   const [isStoryViewerOpen, setIsStoryViewerOpen] = useState(false);
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
   const [currentStoryIndex, setCurrentStoryIndex] = useState(0); // Add state to track the current story index
+  const [showPopup, setShowPopup] = useState(false); // State to control popup visibility
   const navigate = useNavigate();
 
   const generateVideoThumbnail = (videoUrl) => {
@@ -75,11 +76,63 @@ const Home = () => {
     setStories([...stories, newStory]);
   };
 
-  // Add Product Function
-  const addProduct = () => {
-    const newProduct = { id: products.length + 1, name: `Product ${products.length + 1}` };
-    setProducts([...products, newProduct]);
+  const handleAddProduct = async (newProduct) => {
+    try {
+      const userId = localStorage.getItem('userId'); // Ensure this is set in localStorage
+      if (!userId) {
+        throw new Error('User ID is missing. Please log in.');
+      }
+
+      const formData = new FormData();
+      formData.append('name', newProduct.name);
+      formData.append('description', newProduct.description);
+      formData.append('price', newProduct.price);
+      formData.append('image', newProduct.image); // Ensure this is a File object
+
+      const response = await fetch('http://localhost:5000/product/add', {
+        method: 'POST',
+        headers: {
+          'user-id': userId, // Pass user ID in headers
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add product');
+      }
+
+      const result = await response.json();
+      setProducts([...products, { id: result.productId, ...newProduct }]);
+      setShowPopup(false); // Close the popup after adding the product
+    } catch (error) {
+      console.error('Error adding product:', error.message);
+      alert(error.message); // Show error to the user
+    }
   };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/product/list-all', {
+          method: 'GET',
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to fetch products');
+        }
+
+        const result = await response.json();
+        setProducts(result.products); // Update the products state with fetched data
+      } catch (error) {
+        console.error('Error fetching products:', error.message);
+        alert(error.message); // Show error to the user
+      }
+    };
+
+    fetchProducts();
+  }, []); // Run only once when the component mounts
 
   return (
     <div className="home-container">
@@ -198,26 +251,20 @@ const Home = () => {
         <div className="products-container">
           <div className="products">
             {products.map((product) => (
-              <div key={product.id} className="product-card">
-                <div className="product-image-container">
-                  <img src="/placeholder.svg" alt="Product" className="product-image" />
-                </div>
-                <div className="product-details">
-                  <div className="product-name">{product.name}</div>
-                  <div className="product-seller">Seller Name</div>
-                  <div className="product-footer">
-                    <div className="product-price">PHP 599.00</div>
-                    <button className="like-button">❤️</button>
-                  </div>
-                </div>
-              </div>
+              <CardProduct key={product.id} product={product} /> // Add the key prop
             ))}
           </div>
         </div>
       </div>
-
-      {/* Add Product Button */}
-      <button className="add-product-button" onClick={addProduct}>+ Add Product</button>
+      <button className="add-product-button" onClick={() => setShowPopup(true)}>
+        + Add Product
+      </button>
+      {showPopup && (
+        <EditProduct
+          onClose={() => setShowPopup(false)}
+          onSave={handleAddProduct}
+        />
+      )}
     </div>
   );
 };
