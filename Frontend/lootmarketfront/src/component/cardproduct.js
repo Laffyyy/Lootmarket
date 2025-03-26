@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "./cardprodict.css"; // Ensure the CSS file is imported
+import "./cardproduct.css"; // Ensure the CSS file is imported
 
 function CardProduct({ product }) {
   const navigate = useNavigate();
