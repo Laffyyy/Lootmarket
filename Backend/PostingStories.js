@@ -119,4 +119,51 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Endpoint to fetch all users' stories
+router.get('/all', async (req, res) => {
+  try {
+    console.log("Fetching all users' stories");
+    const usersCollection = admin.firestore().collection('users');
+    const usersSnapshot = await usersCollection.get();
+
+    if (usersSnapshot.empty) {
+      console.warn('No users found');
+      return res.status(200).json({ stories: [] });
+    }
+
+    const allStories = [];
+    for (const userDoc of usersSnapshot.docs) {
+      const userId = userDoc.id;
+      const storiesSnapshot = await usersCollection.doc(userId).collection('stories').get();
+
+      storiesSnapshot.forEach((storyDoc) => {
+        const data = storyDoc.data();
+        if (!data.fileId) {
+          console.warn(`Story with missing fileId: ${JSON.stringify(data)}`);
+          return; // Skip stories with missing fileId
+        }
+
+        const fileUrl = data.fileId.includes('.')
+          ? `/bucket/stories/${data.fileId}`
+          : `/bucket/stories/${data.fileId}.jpg`; // Default to .jpg if no extension
+
+        allStories.push({
+          id: storyDoc.id,
+          userId, // Include the user ID for reference
+          title: data.title,
+          caption: data.caption,
+          fileUrl, // Use the corrected fileUrl
+          fileType: data.fileType,
+          timestamp: data.timestamp,
+        });
+      });
+    }
+
+    res.status(200).json({ stories: allStories });
+  } catch (error) {
+    console.error('Error fetching all users\' stories:', error.message, error.stack); // Log detailed error
+    res.status(500).json({ message: 'Failed to fetch all users\' stories', error: error.message });
+  }
+});
+
 module.exports = router;

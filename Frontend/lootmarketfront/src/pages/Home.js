@@ -49,16 +49,8 @@ const Home = () => {
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const userId = localStorage.getItem("userId"); // Retrieve user ID from local storage
-        if (!userId) {
-          alert("User not logged in. Please log in first.");
-          return;
-        }
-
-        console.log(`Fetching stories for userId: ${userId}`);
-        const response = await axios.get("http://localhost:5000/stories", {
-          headers: { "user-id": userId },
-        });
+        console.log("Fetching all users' stories");
+        const response = await axios.get("http://localhost:5000/stories/all"); // Adjusted endpoint to fetch all stories
 
         console.log("Fetched stories:", response.data.stories);
 
