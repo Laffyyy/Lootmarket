@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import logo from '../assets/Images/logo.png'; // Updated path for logo.png
 
 function Login() {
   const [loginData, setLoginData] = useState({ email: '', password: '' });
@@ -82,7 +83,7 @@ function Login() {
       <div className="login-container">
         <div className="login-box">
           <div className="login-left">
-            <img src="/logo.png" alt="Logo" className="logo" />
+        
             <h2>Login</h2>
             <GoogleLogin
               onSuccess={handleGoogleSuccess}

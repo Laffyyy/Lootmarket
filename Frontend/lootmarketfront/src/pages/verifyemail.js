@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import './register.css'; // Import the CSS file
-import logo from '../assets/logo.png'; // Import the logo
+import logo from '../assets/Images/logo.png'; // Corrected the path to the logo file
 
 export default function VerifyEmail() {
   const [email, setEmail] = useState('');

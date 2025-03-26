@@ -146,6 +146,36 @@ body {
   font-size: 18px;
   font-weight: bold;
   color: #1e6091;
+  overflow: hidden;
+}
+
+.story img {
+  width: 150px;
+  height: auto;
+  margin-bottom: 20%;
+
+}
+
+/* Story Thumbnail */
+.story-thumbnail {
+  width: auto;
+  height: 60px;
+}
+
+/* Story Title */
+.story-title {
+  font-size: 12px;
+  text-align: center;
+  white-space: nowrap;
+  width: 100%; /* Ensure it spans the full width of the story container */
+  flex: auto;
+  flex-direction: column;
+  position: relative; /* Position relative to the story container */
+  z-index: 1; /* Ensure it stays above the image */
+  color: #1e6091; /* Ensure the text color is visible */
+
+
+
 }
 
 .add-story {

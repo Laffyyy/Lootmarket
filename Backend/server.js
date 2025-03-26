@@ -7,8 +7,8 @@ const authRoutes = require('./auth'); // Ensure auth.js exports a router instanc
 const loginRoutes = require('./login'); // Ensure login.js exports a router instance
 const googleSigninRoutes = require('./google-signin'); // Ensure this is correctly imported
 const postingStoriesRoutes = require('./PostingStories'); // Import the new route
-const productRoutes = require('./product'); // Import the product route
 const path = require('path'); // Import path module
+const productRoutes = require('./product'); // Import the product route
 const forgotpass = require('./forgotpass'); // Ensure this is correctly imported
 
 dotenv.config(); // Ensure this loads the FIREBASE_API_KEY from the .env file
@@ -22,6 +22,36 @@ app.use(cors({
   methods: ['GET', 'POST'], // Allow specific HTTP methods
   allowedHeaders: ['Content-Type', 'Authorization', 'user-id'], // Add 'user-id' to allowed headers
 })); // Allow requests from the frontend
+
+// Serve static files from the bucket directory
+app.use('/bucket', express.static(path.join(__dirname, 'bucket')));
+
+// Serve static files from the bucket/stories directory
+app.use('/bucket/stories', express.static(path.join(__dirname, 'bucket', 'stories')));
+
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, '..', 'Frontend', 'lootmarketfront', 'public')));
+
+// Ensure logo.png is served correctly
+app.use('/logo.png', express.static(path.join(__dirname, '..', 'Frontend', 'lootmarketfront', 'public', 'logo.png')));
+
+// Log requests to static files for debugging directory
+app.use('/bucket/stories', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS'); // Allow GET and OPTIONS methods
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow specific headers
+  console.log(`Static file requested: ${req.path}`);
+  next();
+});
+
+// Set CORS and access control headers for all requests
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000'); // Allow requests from the frontend
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // Allow specific methods
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allow specific headers
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups'); // Add Cross-Origin-Opener-Policy header
+  next();
+});
 
 // Parse Firebase configuration from environment variable
 const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG); // Ensure this matches the correct Firebase project
@@ -72,11 +102,9 @@ app.get('/users', async (req, res) => {
     const usersRef = db.collection('user');
     const snapshot = await usersRef.get();
     const users = [];
-
     snapshot.forEach(doc => {
       users.push({ id: doc.id, ...doc.data() });
     });
-
     res.status(200).json(users);
   } catch (error) {
     res.status(500).send('Error getting users: ' + error.message);

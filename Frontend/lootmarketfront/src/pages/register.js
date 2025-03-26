@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './register.css'; // Import the CSS file
-import logo from '../assets/logo.png'; // Import your logo
+import logo from '../assets/Images/logo.png'; // Updated path for logo.png
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -25,14 +25,13 @@ function Register() {
       alert('Error registering user: ' + (error.response ? error.response.data : error.message));
     }
   };
-  
 
   return (
     <div className="register-container">
       <div className="register-box">
         {/* Left Side - Blue with Logo */}
         <div className="register-left">
-          <img src={logo} alt="Logo" className="register-logo" />
+          <img src={logo} alt="Logo" className="register-logo" /> {/* Correctly reference logo.png */}
         </div>
 
         {/* Right Side - Register Form */}
