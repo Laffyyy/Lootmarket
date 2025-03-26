@@ -22,28 +22,38 @@ const CreatePost = ({ onClose, onStoryPosted, simpleMode }) => {
   useEffect(() => {
     if (isEditing && media?.type.startsWith("image/")) {
       const $image = $(guillotineRef.current);
-
+  
+      if (!guillotineRef.current || !$image.length) {
+        console.warn("GuillotineRef not set or image not loaded yet.");
+        return;
+      }
+  
       const initializeGuillotine = () => {
         if ($image.data("guillotine")) {
           $image.guillotine("remove"); // Remove previous instance
         }
-        $image.guillotine({ width: 300, height: 300 });
-
+        $image.guillotine({
+          width: 300,
+          height: 300,
+          eventOnChange: "guillotinechange",
+        });
+  
         // Attach control buttons
-        document.getElementById("rotate-left").onclick = () => $image.guillotine("rotateLeft");
-        document.getElementById("rotate-right").onclick = () => $image.guillotine("rotateRight");
-        document.getElementById("zoom-in").onclick = () => $image.guillotine("zoomIn");
-        document.getElementById("zoom-out").onclick = () => $image.guillotine("zoomOut");
-        document.getElementById("fit").onclick = () => $image.guillotine("fit");
-        document.getElementById("center").onclick = () => $image.guillotine("center");
+        $("#rotate-left").off().on("click", () => $image.guillotine("rotateLeft"));
+        $("#rotate-right").off().on("click", () => $image.guillotine("rotateRight"));
+        $("#zoom-in").off().on("click", () => $image.guillotine("zoomIn"));
+        $("#zoom-out").off().on("click", () => $image.guillotine("zoomOut"));
+        $("#fit").off().on("click", () => $image.guillotine("fit"));
+        $("#center").off().on("click", () => $image.guillotine("center"));
       };
-
+  
+      // Initialize when image loads
       if (guillotineRef.current.complete) {
-        initializeGuillotine();
+        setTimeout(initializeGuillotine, 200);
       } else {
         $image.on("load", initializeGuillotine);
       }
-
+  
       return () => {
         if ($image.data("guillotine")) {
           $image.guillotine("remove");
@@ -52,6 +62,7 @@ const CreatePost = ({ onClose, onStoryPosted, simpleMode }) => {
       };
     }
   }, [isEditing, media]);
+  
 
   const handleMediaChange = (event) => {
     const file = event.target.files[0];
@@ -89,30 +100,51 @@ const CreatePost = ({ onClose, onStoryPosted, simpleMode }) => {
   };
 
   const handleEditImage = () => {
+    if (!media) {
+      alert("No image to edit!");
+      return;
+    }
     setIsEditing(true);
   };
+  
 
   const handleSaveImage = () => {
     if (media && media.type.startsWith("image/")) {
       const $image = $(guillotineRef.current);
       const data = $image.guillotine("getData");
-
+  
       const img = new Image();
-      img.src = preview;
+      img.src = preview; // Use the existing preview URL
+  
       img.onload = () => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-
+  
+        // Set canvas size based on cropping data
         canvas.width = data.w;
         canvas.height = data.h;
-        ctx.drawImage(img, data.x, data.y, data.w, data.h, 0, 0, data.w, data.h);
-
-        const croppedDataURL = canvas.toDataURL("image/png");
-        setPreview(croppedDataURL);
-        setIsEditing(false);
+  
+        // Apply cropping
+        ctx.drawImage(
+          img,
+          data.x, data.y, data.w, data.h, // Source (crop area)
+          0, 0, data.w, data.h // Destination (canvas)
+        );
+  
+        // Convert canvas to image
+        canvas.toBlob((blob) => {
+          const newPreviewUrl = URL.createObjectURL(blob);
+          setPreview(newPreviewUrl); // Update preview with the new cropped image
+          
+          // Update media state with the new blob (React will detect change)
+          setMedia(new File([blob], "cropped-image.png", { type: "image/png" }));
+  
+          setIsEditing(false);
+        }, "image/png");
       };
     }
   };
+  
 
   const handleTrimVideo = () => {
     alert("Video trimming functionality will be implemented here.");
