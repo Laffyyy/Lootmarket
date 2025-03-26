@@ -233,6 +233,50 @@
     margin-top: 10px;
   }
 
+  .guillotine-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    position: relative;
+  }
+/* Guillotine Controls */
+.guillotine-controls {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.guillotine-controls button {
+    background: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.guillotine-controls button:hover {
+    background: #0056b3;
+}
+
+.save-button {
+    margin-top: 20px; /* Add margin to create space between controls and button */
+    background: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
 @media (forced-colors: active) {
   .create-post-overlay {
     background: WindowText;

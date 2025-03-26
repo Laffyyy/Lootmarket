@@ -195,7 +195,7 @@ const CreatePost = ({ onClose, onStoryPosted, simpleMode }) => {
                 isEditing ? (
                   <div className="edit-container">
                     <img ref={guillotineRef} src={preview} alt="Editable Preview" className="image-preview" />
-                    
+                    <div className="guillotine-container"/> 
                     {/* Guillotine Controls */}
                     <div className="guillotine-controls">
                       <button id="rotate-left">↺ Rotate Left</button>
@@ -207,7 +207,8 @@ const CreatePost = ({ onClose, onStoryPosted, simpleMode }) => {
                     </div>
 
                     <button className="save-button" onClick={handleSaveImage}>Save</button>
-                  </div>
+                  </div>  
+               
                 ) : (
                   <img src={preview} alt="Preview" className="image-preview" />
                 )

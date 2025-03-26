@@ -23,7 +23,14 @@ const Home = () => {
       const video = document.createElement("video");
       video.src = videoUrl;
       video.crossOrigin = "anonymous"; // Allow cross-origin access for thumbnails
+      video.muted = true; // Mute the video to allow autoplay
+      video.playsInline = true; // Ensure it plays inline on mobile devices
+
       video.addEventListener("loadeddata", () => {
+        video.currentTime = 0.5; // Seek to a frame near the start
+      });
+
+      video.addEventListener("seeked", () => {
         const canvas = document.createElement("canvas");
         canvas.width = 60; // Thumbnail width
         canvas.height = 60; // Thumbnail height
@@ -31,6 +38,7 @@ const Home = () => {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         resolve(canvas.toDataURL("image/png")); // Return the thumbnail as a data URL
       });
+
       video.addEventListener("error", () => {
         console.warn(`Failed to load video for thumbnail: ${videoUrl}`);
         resolve(null); // Return null if thumbnail generation fails
@@ -198,30 +206,12 @@ const Home = () => {
                     cursor: "pointer",
                   }}
                 >
+                  <div className="story-title"> {story.title}</div>
                   <img
                     src={previewUrl}
                     alt={story.title}
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                      marginBottom: "5px",
-                    }}
+                    className="story-thumbnail" // Use the existing class for the image
                   />
-                  <div
-                    className="story-content"
-                    style={{
-                      fontSize: "12px",
-                      textAlign: "center",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                      width: "60px",
-                    }}
-                  >
-                    {story.title}
-                  </div>
                 </div>
               );
             })}

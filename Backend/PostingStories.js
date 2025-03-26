@@ -107,6 +107,7 @@ router.get('/', async (req, res) => {
         title: data.title,
         caption: data.caption,
         fileUrl, // Use the corrected fileUrl
+        fileType: data.fileType,
         timestamp: data.timestamp,
       });
     });
