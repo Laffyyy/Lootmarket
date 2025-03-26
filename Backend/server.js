@@ -7,6 +7,8 @@ const authRoutes = require('./auth'); // Ensure auth.js exports a router instanc
 const loginRoutes = require('./login'); // Ensure login.js exports a router instance
 const googleSigninRoutes = require('./google-signin'); // Ensure this is correctly imported
 const postingStoriesRoutes = require('./PostingStories'); // Import the new route
+const productRoutes = require('./product'); // Import the product route
+const path = require('path'); // Import path module
 const forgotpass = require('./forgotpass'); // Ensure this is correctly imported
 
 dotenv.config(); // Ensure this loads the FIREBASE_API_KEY from the .env file
@@ -55,6 +57,12 @@ app.use('/google-signin', googleSigninRoutes); // Ensure this is correctly regis
 
 // Use posting stories routes
 app.use('/stories', postingStoriesRoutes); // Register the route
+
+// Use product routes
+app.use('/product', productRoutes); // Register the product route
+
+// Serve static files from the bucket folder
+app.use('/bucket', express.static(path.join(__dirname, 'bucket'))); // Ensure this serves the correct folder
 
 app.use('/forgotpass', forgotpass); // Ensure this is correctly imported
 

@@ -44,7 +44,6 @@ export default function VerifyEmail() {
       setError('An error occurred while verifying the email');
     }
   };
-
   return (
     <div className="register-container">
       <div className="register-box">
