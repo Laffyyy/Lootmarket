@@ -40,7 +40,6 @@ export default function VerifyEmail() {
       setError('An error occurred while verifying the email');
     }
   };
-
   return (
     <div>
       <h1>Verify Your Email</h1>
