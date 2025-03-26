@@ -9,6 +9,7 @@ const googleSigninRoutes = require('./google-signin'); // Ensure this is correct
 const postingStoriesRoutes = require('./PostingStories'); // Import the new route
 const productRoutes = require('./product'); // Import the product route
 const path = require('path'); // Import path module
+const forgotpass = require('./forgotpass'); // Ensure this is correctly imported
 
 dotenv.config(); // Ensure this loads the FIREBASE_API_KEY from the .env file
 
@@ -62,6 +63,8 @@ app.use('/product', productRoutes); // Register the product route
 
 // Serve static files from the bucket folder
 app.use('/bucket', express.static(path.join(__dirname, 'bucket'))); // Ensure this serves the correct folder
+
+app.use('/forgotpass', forgotpass); // Ensure this is correctly imported
 
 // Endpoint to get user data
 app.get('/users', async (req, res) => {
