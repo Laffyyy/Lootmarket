@@ -1,130 +1,53 @@
 import React, { useState, useEffect } from "react";
 import "./StoryViewer.css";
 
-const StoryViewer = ({ onClose }) => {
-  const [stories, setStories] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+const StoryViewer = ({ stories, currentIndex = 0, onClose }) => {
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(currentIndex);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId"); // Retrieve user ID from local storage
-    if (!userId) {
-      console.error("User not logged in. Please log in first.");
-      return;
-    }
-
-    fetch(`http://localhost:5000/stories`, {
-      headers: { "user-id": userId },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch stories");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const updatedStories = data.stories.map((story) => ({
-          ...story,
-          pictureUrl: story.pictureUrl.startsWith("http")
-            ? story.pictureUrl
-            : `http://localhost:5000${story.pictureUrl}`, // Ensure full URL
-        }));
-        setStories(updatedStories);
-      })
-      .catch((error) => console.error("Error fetching stories:", error));
-  }, []);
+    setCurrentStoryIndex(currentIndex);
+  }, [currentIndex]);
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % stories.length);
+    setCurrentStoryIndex((prevIndex) => (prevIndex + 1) % stories.length);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + stories.length) % stories.length);
-  };
-
-  const modalStyles = {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.8)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  };
-
-  const contentStyles = {
-    position: "relative",
-    backgroundColor: "#fff",
-    padding: "20px",
-    borderRadius: "8px",
-    width: "80%",
-    maxWidth: "600px",
-    textAlign: "center",
-    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  };
-
-  const imageStyles = {
-    width: "100%",
-    height: "auto",
-    borderRadius: "8px",
-  };
-
-  const buttonStyles = {
-    position: "absolute",
-    top: "50%",
-    transform: "translateY(-50%)",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    color: "#fff",
-    border: "none",
-    borderRadius: "50%",
-    width: "40px",
-    height: "40px",
-    cursor: "pointer",
-  };
-
-  const prevButtonStyles = {
-    ...buttonStyles,
-    left: "10px",
-  };
-
-  const nextButtonStyles = {
-    ...buttonStyles,
-    right: "10px",
-  };
-
-  const closeButtonStyles = {
-    position: "absolute",
-    top: "10px",
-    right: "10px",
-    backgroundColor: "#f44336",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    padding: "5px 10px",
-    cursor: "pointer",
+    setCurrentStoryIndex((prevIndex) => (prevIndex - 1 + stories.length) % stories.length);
   };
 
   return (
-    <div style={modalStyles}>
-      <div style={contentStyles}>
-        <button onClick={onClose} style={closeButtonStyles}>
+    <div className="story-viewer-overlay">
+      <div className="story-viewer-container">
+        <button className="close-button" onClick={onClose}>
           Close
         </button>
         {stories.length > 0 && (
           <>
-            <img
-              src={stories[currentIndex].pictureUrl}
-              alt={stories[currentIndex].title}
-              style={imageStyles}
-            />
-            <h3>{stories[currentIndex].title}</h3>
-            <p>{stories[currentIndex].caption}</p>
-            <button onClick={handlePrev} style={prevButtonStyles}>
+            <h3 className="story-title">{stories[currentStoryIndex].title}</h3>
+            {stories[currentStoryIndex].fileType === "video" ? (
+              <video
+                src={stories[currentStoryIndex].fileUrl}
+                controls
+                autoPlay
+                muted
+                playsInline
+                className="story-image"
+                onError={(e) => console.error("Video failed to load:", e.target.error)}
+                onLoadedData={() => console.log("Video loaded successfully")}
+              />
+            ) : (
+              <img
+                src={stories[currentStoryIndex].fileUrl}
+                alt={stories[currentStoryIndex].title}
+                className="story-image"
+              />
+            )}
+            <p>{stories[currentStoryIndex].caption}</p>
+            <button className="nav-button left" onClick={handlePrev}>
               &#8249;
             </button>
-            <button onClick={handleNext} style={nextButtonStyles}>
+            <button className="nav-button right" onClick={handleNext}>
               &#8250;
             </button>
           </>

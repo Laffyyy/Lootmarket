@@ -24,9 +24,27 @@ app.use(cors({
 // Serve static files from the bucket directory
 app.use('/bucket', express.static(path.join(__dirname, 'bucket')));
 
-// Log requests to static files for debugging
-app.use('/bucket', (req, res, next) => {
+// Serve static files from the bucket/stories directory
+app.use('/bucket/stories', express.static(path.join(__dirname, 'bucket', 'stories')));
+
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, '..', 'Frontend', 'lootmarketfront', 'public')));
+
+// Log requests to static files for debugging directory
+app.use('/bucket/stories', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS'); // Allow GET and OPTIONS methods
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Allow specific headers
   console.log(`Static file requested: ${req.path}`);
+  next();
+});
+
+// Set CORS and access control headers for all requests
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // Allow specific methods
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allow specific headers
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups'); // Add Cross-Origin-Opener-Policy header
   next();
 });
 
@@ -71,11 +89,9 @@ app.get('/users', async (req, res) => {
     const usersRef = db.collection('user');
     const snapshot = await usersRef.get();
     const users = [];
-
     snapshot.forEach(doc => {
       users.push({ id: doc.id, ...doc.data() });
     });
-
     res.status(200).json(users);
   } catch (error) {
     res.status(500).send('Error getting users: ' + error.message);

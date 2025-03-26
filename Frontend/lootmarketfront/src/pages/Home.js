@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./Home.css";
-import bannerImage from "lootmarketfront/public/banner.png";
 import StoryViewer from "../assets/components/StoryViewer";
 import CreatePost from "../assets/components/CreatePost";
+import "./Home.css";
+import bannerImage from "lootmarketfront/public/banner.png";
+import logo from "../assets/Images/logo.png"; // Updated path for logo.png
 import axios from "axios";
 
 const Home = () => {
@@ -11,7 +12,28 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [isStoryViewerOpen, setIsStoryViewerOpen] = useState(false);
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
+  const [currentStoryIndex, setCurrentStoryIndex] = useState(0); // Add state to track the current story index
   const navigate = useNavigate();
+
+  const generateVideoThumbnail = (videoUrl) => {
+    return new Promise((resolve) => {
+      const video = document.createElement("video");
+      video.src = videoUrl;
+      video.crossOrigin = "anonymous"; // Allow cross-origin access for thumbnails
+      video.addEventListener("loadeddata", () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = 60; // Thumbnail width
+        canvas.height = 60; // Thumbnail height
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/png")); // Return the thumbnail as a data URL
+      });
+      video.addEventListener("error", () => {
+        console.warn(`Failed to load video for thumbnail: ${videoUrl}`);
+        resolve(null); // Return null if thumbnail generation fails
+      });
+    });
+  };
 
   useEffect(() => {
     const fetchStories = async () => {
@@ -29,21 +51,18 @@ const Home = () => {
 
         console.log("Fetched stories:", response.data.stories);
 
-        const storiesWithImages = await Promise.all(
+        const storiesWithThumbnails = await Promise.all(
           response.data.stories.map(async (story) => {
-            const imageUrl = `http://localhost:5000${story.pictureUrl}`;
-            try {
-              await axios.get(imageUrl); // Check if the image exists
-              return { ...story, pictureUrl: imageUrl };
-            } catch {
-              console.warn(`Image not found for story: ${story.title}`);
-              return null; // Skip stories with missing images
+            const fileUrl = `http://localhost:5000${story.fileUrl}`;
+            if (story.fileType === "video") {
+              const thumbnail = await generateVideoThumbnail(fileUrl);
+              return { ...story, fileUrl, thumbnail };
             }
+            return { ...story, fileUrl };
           })
         );
 
-        // Filter out stories with missing images
-        setStories(storiesWithImages.filter((story) => story !== null));
+        setStories(storiesWithThumbnails);
       } catch (error) {
         console.error("Error fetching stories:", error);
       }
@@ -68,7 +87,7 @@ const Home = () => {
       {/* Navbar */}
       <nav className="navbar">
         <div className="logo-container">
-          <div className="logo-img"></div> {/* Space for logo */}
+          <img src="" alt="LootMarket Logo" className="logo-img" /> {/* Correctly reference logo.png */}
           <div className="logo-text">LootMarket</div>
         </div>
         <div className="nav-links">
@@ -102,15 +121,23 @@ const Home = () => {
               <span>+</span>
             </div>
             {stories.map((story, index) => {
-              const fullImageUrl = story.pictureUrl.startsWith("http")
-                ? story.pictureUrl // Use as-is if it's already a full URL
-                : `http://localhost:5000${story.pictureUrl}`;
-              console.log(`Displaying story: ${story.title}, Full Image URL: ${fullImageUrl}`);
+              // Ensure the story object is valid and has the required properties
+              if (!story || !story.fileUrl || !story.title) {
+                console.warn(`Invalid story object at index ${index}:`, story);
+                return null; // Skip rendering invalid stories
+              }
+
+              const fullFileUrl = story.fileUrl;
+              const previewUrl = story.fileType === "video" ? story.thumbnail : fullFileUrl;
+
               return (
                 <div
                   key={story.id}
                   className="story"
-                  onClick={() => setIsStoryViewerOpen(true)}
+                  onClick={() => {
+                    setCurrentStoryIndex(index); // Set the current story index
+                    setIsStoryViewerOpen(true); // Open the StoryViewer
+                  }}
                   style={{
                     display: "flex",
                     flexDirection: "column",
@@ -119,7 +146,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src={fullImageUrl} // Use the corrected full URL
+                    src={previewUrl}
                     alt={story.title}
                     style={{
                       width: "60px",
@@ -151,6 +178,7 @@ const Home = () => {
       {isStoryViewerOpen && (
         <StoryViewer
           stories={stories}
+          currentIndex={currentStoryIndex} // Pass the current story index
           onClose={() => setIsStoryViewerOpen(false)}
         />
       )}

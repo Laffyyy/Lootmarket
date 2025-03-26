@@ -232,3 +232,10 @@
     border-radius: 5px;
     margin-top: 10px;
   }
+
+@media (forced-colors: active) {
+  .create-post-overlay {
+    background: WindowText;
+    color: Window;
+  }
+}
