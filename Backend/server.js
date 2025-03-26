@@ -9,7 +9,6 @@ const googleSigninRoutes = require('./google-signin'); // Ensure this is correct
 const postingStoriesRoutes = require('./PostingStories'); // Import the new route
 const path = require('path'); // Import path module
 const productRoutes = require('./product'); // Import the product route
-const path = require('path'); // Import path module
 const forgotpass = require('./forgotpass'); // Ensure this is correctly imported
 
 dotenv.config(); // Ensure this loads the FIREBASE_API_KEY from the .env file
@@ -33,6 +32,9 @@ app.use('/bucket/stories', express.static(path.join(__dirname, 'bucket', 'storie
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, '..', 'Frontend', 'lootmarketfront', 'public')));
 
+// Ensure logo.png is served correctly
+app.use('/logo.png', express.static(path.join(__dirname, '..', 'Frontend', 'lootmarketfront', 'public', 'logo.png')));
+
 // Log requests to static files for debugging directory
 app.use('/bucket/stories', (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
@@ -44,7 +46,7 @@ app.use('/bucket/stories', (req, res, next) => {
 
 // Set CORS and access control headers for all requests
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000'); // Allow requests from the frontend
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS'); // Allow specific methods
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allow specific headers
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups'); // Add Cross-Origin-Opener-Policy header

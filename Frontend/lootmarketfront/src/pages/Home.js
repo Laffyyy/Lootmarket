@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import StoryViewer from "../assets/components/StoryViewer";
-import CreatePost from "../assets/components/CreatePost";
+import StoryViewer from "../component/StoryViewer";
+import CreatePost from "../component/CreatePost";
 import "./Home.css";
 import bannerImage from "lootmarketfront/public/banner.png";
+import logo from "../assets/Images/logo.png"; // Corrected logo import
 import CardProduct from "../component/cardproduct";
 import EditProduct from "../component/editproduct"; // Import the EditProduct component
+import axios from "axios";
 
 const Home = () => {
   const [stories, setStories] = useState([]);
@@ -136,11 +138,10 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* Ensure no <Router> is used here */}
       {/* Navbar */}
       <nav className="navbar">
         <div className="logo-container">
-          <img src="" alt="LootMarket Logo" className="logo-img" /> {/* Correctly reference logo.png */}
+          <img src={logo} alt="LootMarket Logo" className="logo-img" /> {/* Correctly reference logo.png */}
           <div className="logo-text">LootMarket</div>
         </div>
         <div className="nav-links">
@@ -154,7 +155,6 @@ const Home = () => {
             <input type="text" placeholder="Search" className="search-bar" />
             <img src="/search.png" alt="Search" className="search-icon" />
           </div>
-          {/* Other navbar items */}
           <img src="/profile.png" alt="Profile" className="profile-icon" onClick={() => navigate("/profile")} />
         </div>
       </nav>
@@ -251,7 +251,7 @@ const Home = () => {
         <div className="products-container">
           <div className="products">
             {products.map((product) => (
-              <CardProduct key={product.id} product={product} /> // Add the key prop
+              <CardProduct key={product.id || product.name} product={product} /> // Ensure unique key
             ))}
           </div>
         </div>

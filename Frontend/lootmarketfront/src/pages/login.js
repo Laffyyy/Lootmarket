@@ -83,7 +83,7 @@ function Login() {
       <div className="login-container">
         <div className="login-box">
           <div className="login-left">
-            <img src={logo} alt="Logo" className="logo" /> {/* Correctly reference logo.png */}
+        
             <h2>Login</h2>
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
